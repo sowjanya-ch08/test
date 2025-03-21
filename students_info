@@ -1,0 +1,66 @@
+mysql> CREATE TABLE Students_info(rollno varchar(100),name varchar(100),email varchar(100),branch varchar(50), phone_no varchar(15));
+Query OK, 0 rows affected (0.02 sec)
+
+mysql> insert into Students_info values('2211cs010098','sowjanya','2211cs010098@mallareddyuniversity.ac.in' ,'cse','8008850471');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> insert into Students_info values('2211cs010099','vanisha','2211cs010099@mallareddyuniversity.ac.in' ,'cse','8008857471');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Students_info values('2211cs010100','abhinaya','2211cs010100@mallareddyuniversity.ac.in' ,'cse','9678850471');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Students_info values('2211cs010101','ruthvikaa','2211cs010101@mallareddyuniversity.ac.in' ,'cse','7688850471');
+Query OK, 1 row affected (0.00 sec)
+
+mysql> insert into Students_info values('2211cs010102','ramya','2211cs010102@mallareddyuniversity.ac.in' ,'cse','9878850471');
+Query OK, 1 row affected (0.01 sec)
+
+mysql> select * from student_info;
+ERROR 1146 (42S02): Table 'sowjanya.student_info' doesn't exist
+mysql> select * from Students_info;
++--------------+-----------+-----------------------------------------+--------+------------+
+| rollno       | name      | email                                   | branch | phone_no   |
++--------------+-----------+-----------------------------------------+--------+------------+
+| 2211cs010098 | sowjanya  | 2211cs010098@mallareddyuniversity.ac.in | cse    | 8008850471 |
+| 2211cs010099 | vanisha   | 2211cs010099@mallareddyuniversity.ac.in | cse    | 8008857471 |
+| 2211cs010100 | abhinaya  | 2211cs010100@mallareddyuniversity.ac.in | cse    | 9678850471 |
+| 2211cs010101 | ruthvikaa | 2211cs010101@mallareddyuniversity.ac.in | cse    | 7688850471 |
+| 2211cs010102 | ramya     | 2211cs010102@mallareddyuniversity.ac.in | cse    | 9878850471 |
++--------------+-----------+-----------------------------------------+--------+------------+
+5 rows in set (0.00 sec)
+const express = require("express");
+const mysql = require("mysql");
+const cors = require("cors");
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+// MySQL Connection
+const db = mysql.createConnection({
+    host: "localhost",
+    user: "sowjanya",
+    password: "mysql", // Add your MySQL password
+    database: "sowjanya"
+});
+
+db.connect(err => {
+    if (err) {
+        console.error("Database connection failed:", err);
+    } else {
+        console.log("Connected to MySQL");
+    }
+});
+
+// API to fetch students' data
+app.get("/students", (req, res) => {
+    db.query("SELECT * FROM Students_info", (err, result) => {
+        if (err) return res.status(500).json({ error: err });
+        res.json(result);
+    });
+});
+
+app.listen(5000, () => {
+    console.log("Server running on port 5000");
+});
