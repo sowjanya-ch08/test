@@ -29,38 +29,74 @@ mysql> select * from Students_info;
 | 2211cs010102 | ramya     | 2211cs010102@mallareddyuniversity.ac.in | cse    | 9878850471 |
 +--------------+-----------+-----------------------------------------+--------+------------+
 5 rows in set (0.00 sec)
-const express = require("express");
-const mysql = require("mysql");
-const cors = require("cors");
+package com.example.studentbackend.model;
 
-const app = express();
-app.use(cors());
-app.use(express.json());
+import jakarta.persistence.*;
 
-// MySQL Connection
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "sowjanya",
-    password: "mysql", // Add your MySQL password
-    database: "sowjanya"
-});
+@Entity
+@Table(name = "Students_info") // Ensure this matches your MySQL table name
+public class Student {
 
-db.connect(err => {
-    if (err) {
-        console.error("Database connection failed:", err);
-    } else {
-        console.log("Connected to MySQL");
+    @Id
+    private String rollno;
+    private String name;
+    private String email;
+    private String branch;
+    private String phone_no;
+
+    // Constructors
+    public Student() {}
+
+    public Student(String rollno, String name, String email, String branch, String phone_no) {
+        this.rollno = rollno;
+        this.name = name;
+        this.email = email;
+        this.branch = branch;
+        this.phone_no = phone_no;
     }
-});
 
-// API to fetch students' data
-app.get("/students", (req, res) => {
-    db.query("SELECT * FROM Students_info", (err, result) => {
-        if (err) return res.status(500).json({ error: err });
-        res.json(result);
-    });
-});
+    // Getters and Setters
+    public String getRollno() { return rollno; }
+    public void setRollno(String rollno) { this.rollno = rollno; }
 
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
-});
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+
+    public String getBranch() { return branch; }
+    public void setBranch(String branch) { this.branch = branch; }
+
+    public String getPhone_no() { return phone_no; }
+    public void setPhone_no(String phone_no) { this.phone_no = phone_no; }
+}
+package com.example.studentbackend.repository;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import com.example.studentbackend.model.Student;
+
+public interface StudentRepository extends JpaRepository<Student, String> {}
+package com.example.studentbackend.controller;
+
+import org.springframework.web.bind.annotation.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import java.util.List;
+import com.example.studentbackend.model.Student;
+import com.example.studentbackend.repository.StudentRepository;
+
+@RestController
+@RequestMapping("/students")
+@CrossOrigin(origins = "http://localhost:3000") // Allow React frontend
+public class StudentController {
+
+    @Autowired
+    private StudentRepository studentRepo;
+
+    // Get all students
+    @GetMapping
+    public List<Student> getAllStudents() {
+        return studentRepo.findAll();
+    }
+}
+
